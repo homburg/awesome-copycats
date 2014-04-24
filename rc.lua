@@ -50,11 +50,17 @@ end
 
 run_once("urxvtd")
 run_once("unclutter")
--- Worked, at least once
--- run_once("sleep 2; and xmodmap ~/.Xmodmap")
-run_once("sleep 1;and xmodmap ~/.Xmodmap")
+
+-- Working now, trusty 14.04 + 3.5
+run_once("sleep 2;and xmodmap ~/.Xmodmap")
 run_once("gnome-settings-daemon")
-run_once("synergys /home/tbh/.quicksynergy/synergy.conf")
+
+-- Does not work? confirm?
+--   Confirmed
+-- run_once("synergys /home/tbh/.quicksynergy/synergy.conf")
+
+run_once("synergys /home/tbh/.synergy.conf")
+
 -- }}}
 
 -- {{{ Variable definitions
@@ -65,7 +71,7 @@ os.setlocale(os.getenv("LANG"))
 beautiful.init(os.getenv("HOME") .. "/.config/awesome/themes/multicolor/theme.lua")
 
 -- common
-modkey     = "Mod4"
+modkey     = "Mod3"
 altkey     = "Mod1"
 -- terminal   = "urxvtc" or "xterm"
 terminal   = "gnome-terminal"
@@ -449,10 +455,10 @@ globalkeys = awful.util.table.join(
         end),
 
     -- Show Menu
-    awful.key({ modkey }, "w",
-        function ()
-            mymainmenu:show({ keygrabber = true })
-        end),
+    -- awful.key({ modkey }, "w",
+    --     function ()
+    --         mymainmenu:show({ keygrabber = true })
+    --     end),
 
     -- Show/Hide Wibox
     awful.key({ modkey }, "b", function ()
@@ -485,6 +491,7 @@ globalkeys = awful.util.table.join(
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
+    -- awful.key({ "Mod4",           }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey, "Control" }, "r",      awesome.restart),
     awful.key({ modkey, "Shift"   }, "q",      awesome.quit),
 
@@ -495,6 +502,7 @@ globalkeys = awful.util.table.join(
     -- awful.key({ altkey,           }, "c",      function () lain.widgets.calendar:show(7) end),
     -- awful.key({ altkey,           }, "h",      function () fswidget.show(7) end),
     -- awful.key({ altkey,           }, "w",      function () yawn.show(7) end),
+    awful.key({ modkey,           }, "w",      function () yawn.show(7) end),
 
     -- ALSA volume control
     -- awful.key({ altkey }, "Up",
@@ -541,11 +549,12 @@ globalkeys = awful.util.table.join(
     --     end),
 
     -- Copy to clipboard
-    awful.key({ modkey }, "c", function () os.execute("xsel -p -o | xsel -i -b") end),
+    -- awful.key({ "Mod4" }, "c", function () os.execute("xsel -p -o | xsel -i -b") end),
+	-- awful.key({ "Mod4" }, "v", function () os.execute("/home/tbh/bin/copy-from-primary-selection-to-clipboard") end),
 
     -- User programs
     awful.key({ modkey }, "g", function () awful.util.spawn(browser) end),
-    awful.key({ modkey }, "w", function () awful.util.spawn(browser2) end),
+    -- awful.key({ modkey }, "w", function () awful.util.spawn(browser2) end),
     awful.key({ modkey }, "s", function () awful.util.spawn(gui_editor) end),
     awful.key({ modkey }, "g", function () awful.util.spawn(graphics) end),
 
@@ -572,6 +581,7 @@ clientkeys = awful.util.table.join(
         function (c)
             -- The client currently has the input focus, so it cannot be
             -- minimized, since minimized clients can't have the focus.
+			-- mod+ctrl+n for unminimize...
             c.minimized = true
         end),
     awful.key({ modkey,           }, "m",
@@ -586,6 +596,7 @@ clientkeys = awful.util.table.join(
 -- This should map on the top row of your keyboard, usually 1 to 9.
 for i = 1, 9 do
     globalkeys = awful.util.table.join(globalkeys,
+		-- Switch tag
         awful.key({ modkey }, "#" .. i + 9,
                   function ()
                         local screen = mouse.screen
@@ -594,6 +605,7 @@ for i = 1, 9 do
                            awful.tag.viewonly(tag)
                         end
                   end),
+		--  Show multiple tags at the same time
         awful.key({ modkey, "Control" }, "#" .. i + 9,
                   function ()
                       local screen = mouse.screen
@@ -602,6 +614,7 @@ for i = 1, 9 do
                          awful.tag.viewtoggle(tag)
                       end
                   end),
+		-- Move to tag
         awful.key({ modkey, "Shift" }, "#" .. i + 9,
                   function ()
                       local tag = awful.tag.gettags(client.focus.screen)[i]
@@ -609,6 +622,7 @@ for i = 1, 9 do
                           awful.client.movetotag(tag)
                      end
                   end),
+		-- Toggle app on multiple tags
         awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
                   function ()
                       local tag = awful.tag.gettags(client.focus.screen)[i]
