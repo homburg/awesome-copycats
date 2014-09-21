@@ -683,8 +683,9 @@ awful.rules.rules = {
     { rule = { class = "URxvt" },
           properties = { opacity = 0.99 } },
 
-    { rule = { class = "chrome_app_list" },
-        properties = { floating = true }},
+    { rule = { instance = "chrome_app_list" },
+          properties = { floating = true },
+    },
 
     { rule = { class = "MPlayer" },
           properties = { floating = true } },
