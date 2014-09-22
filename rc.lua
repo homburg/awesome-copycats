@@ -17,6 +17,10 @@ local drop      = require("scratchdrop")
 local lain      = require("lain")
 -- }}}
 
+naughty.config.defaults.font = "Droid Sans Mono 64"
+naughty.config.defaults.position = "bottom_left"
+naughty.config.defaults.bg = "maroon"
+
 -- {{{ Error handling
 if awesome.startup_errors then
     naughty.notify({ preset = naughty.config.presets.critical,
@@ -45,7 +49,7 @@ function run_once(cmd)
   if firstspace then
      findme = cmd:sub(0, firstspace-1)
   end
-  awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null; or " .. cmd .. "")
+  awful.util.spawn_with_shell("bash -c \"pgrep -u $USER -x " .. findme .. " > /dev/null || " .. cmd .. "\"")
 end
 
 run_once("urxvtd")
@@ -60,6 +64,8 @@ run_once("gnome-settings-daemon")
 -- run_once("synergys /home/tbh/.quicksynergy/synergy.conf")
 
 run_once("synergys /home/tbh/.synergy.conf")
+run_once("solaar")
+run_once("pidgin")
 
 -- }}}
 
@@ -672,6 +678,23 @@ awful.rules.rules = {
 	{ rule = { class = "Pidgin" },
     	  properties = { tag = tags[1][5] } },
 
+	-- NB: Steals focus
+	-- { rule = { class = "Pidgin", role = "conversation" },
+	--       properties = { floating = true } },
+
+	-- { rule = { class = "Pidgin", role = "conversation" },
+	--       callback = function(c)
+	-- 		  c:tags({
+	-- 			  tags[1][1],
+	-- 			  tags[1][2],
+	-- 			  tags[1][3],
+	-- 			  tags[1][4],
+	-- 			  tags[1][5],
+	-- 			  tags[1][6],
+	-- 			  tags[1][7],
+	-- 		  })
+	-- 	  end },
+
 	-- Google-chrome (~/.config/google-chrome-thomas)
 	{ rule = { class = "Google-chrome (~/.config/google-chrome-thomas)" },
     	  properties = { tag = tags[1][7] } },
@@ -679,6 +702,12 @@ awful.rules.rules = {
     { rule = { class = "Gimp", role = "gimp-image-window" },
           properties = { maximized_horizontal = true,
                          maximized_vertical = true } },
+
+	 -- WM_WINDOW_ROLE(STRING) = "pop-up"
+	{ rule = { role = "pop-up" },
+	      properties = { floating = true }},
+
+	
 }
 -- }}}
 
